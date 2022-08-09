@@ -8,7 +8,7 @@ import scala.language.postfixOps
 object Parser {
   var lexer = new Lexer()
 
-  def parseName():Option[String] ={
+  def parseName(): Option[String] = {
     lexer.NextTokenIs(Token.NAME) match {
       case Some((_, name)) => Some(name)
       case _ =>
@@ -16,13 +16,13 @@ object Parser {
     }
   }
 
-  def parseString():Option[String] ={
+  def parseString(): Option[String] = {
     lexer.LookAhead() match {
       case Some(Token.DUOQUOTE) =>
         lexer.NextTokenIs(Token.DUOQUOTE)
         lexer.LookAheadAndSkip(Token.IGNORED)
         Some("")
-      case Some(Token.QUOTE)=>
+      case Some(Token.QUOTE) =>
         lexer.NextTokenIs(Token.QUOTE)
         lexer.scanBeforeToken("\"") match {
           case Some(str) =>
@@ -36,13 +36,13 @@ object Parser {
     }
   }
 
-  def parseVariable():Option[Variable]={
+  def parseVariable(): Option[Variable] = {
     val lineNum = lexer.getLineNum()
     lexer.NextTokenIs(Token.VAR_PREFIX) match {
       case Some(_) =>
-        parseName() match{
+        parseName() match {
           case Some(name) => lexer.LookAheadAndSkip(Token.IGNORED)
-            Some(Variable(lineNum,name))
+            Some(Variable(lineNum, name))
           case _ =>
             printf("parseVariable(): expect a variable name at line %n", lineNum)
             None
@@ -55,13 +55,13 @@ object Parser {
 
   def parseAssignment(): Option[Assignment] = {
     val lineNum = lexer.getLineNum()
-    parseVariable() match{
+    parseVariable() match {
       case Some(variable) => lexer.LookAheadAndSkip(Token.IGNORED)
         lexer.NextTokenIs(Token.EQUAL) match {
           case Some(_) => lexer.LookAheadAndSkip(Token.IGNORED)
-            parseString() match{
+            parseString() match {
               case Some(str) => lexer.LookAheadAndSkip(Token.IGNORED)
-                Some(Assignment(lineNum,variable,str))
+                Some(Assignment(lineNum, variable, str))
               case _ => None
             }
           case None => None
@@ -91,8 +91,8 @@ object Parser {
     }
   }
 
-  def parseStatement():Option[Statement] = {
-    lexer.LookAhead() match{
+  def parseStatement(): Option[Statement] = {
+    lexer.LookAhead() match {
       case Some(Token.PRINT) => parsePrint()
       case Some(Token.VAR_PREFIX) => parseAssignment()
       case _ => printf("parseStatement(): unknown Ast.Statement.")
@@ -100,29 +100,30 @@ object Parser {
     }
   }
 
-  def parseStatements():Option[List[Statement]]= {
-    def parseStatementsAux(statements:List[Statement]): Option[List[Statement]] = {
+  def parseStatements(): Option[List[Statement]] = {
+    def parseStatementsAux(statements: List[Statement]): Option[List[Statement]] = {
       lexer.LookAhead() match {
         case Some(Token.EOF) => Some(statements)
         case Some(_) => parseStatement() match {
-          case Some(stmt) => parseStatementsAux(statements::: List(stmt))
+          case Some(stmt) => parseStatementsAux(statements ::: List(stmt))
           case None => None
         }
         case None => None
       }
     }
+
     parseStatementsAux(Nil)
   }
 
-  def parseSourceCode():Option[SourceCode]= {
+  def parseSourceCode(): Option[SourceCode] = {
     val lineNum = lexer.getLineNum()
-    parseStatements() match{
-      case Some(stmts) => Some(SourceCode(lineNum,stmts))
+    parseStatements() match {
+      case Some(stmts) => Some(SourceCode(lineNum, stmts))
       case None => None
     }
   }
 
-  def parse(code:String):Option[SourceCode] = {
+  def parse(code: String): Option[SourceCode] = {
     lexer.sourceCode = code
     parseSourceCode() match {
       case Some(sc) => lexer.NextTokenIs(Token.EOF)

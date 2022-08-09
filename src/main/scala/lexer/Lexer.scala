@@ -1,6 +1,6 @@
-package Lexer
+package lexer
 
-import Lexer.Token.Token
+import lexer.Token.Token
 
 import java.lang.Character.isLetter
 import scala.util.matching.Regex

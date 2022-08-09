@@ -1,4 +1,4 @@
-package Lexer
+package lexer
 
 object Token extends Enumeration {
   type Token = Value

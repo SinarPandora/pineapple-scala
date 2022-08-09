@@ -1,7 +1,7 @@
-package Parser
+package parser
 
-import Ast._
-import Lexer.{Lexer, Token}
+import asts._
+import lexer.{Lexer, Token}
 
 import scala.language.postfixOps
 

@@ -1,3 +1,3 @@
-package Ast
+package asts
 
 abstract class Statement

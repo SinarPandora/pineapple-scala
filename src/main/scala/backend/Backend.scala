@@ -1,7 +1,7 @@
-package Backend
+package backend
 
-import Parser.Parser
-import Ast._
+import parser.Parser
+import asts._
 import scala.collection.mutable.Map
 
 object Backend {
